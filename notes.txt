@@ -1,0 +1,115 @@
+-> build image
+
+docker build -t getting-started .
+docker build -<taging> <build name> <current directory>
+
+-> show image 
+
+docker images
+docker image ls
+
+-> run image 
+
+docker run -dp 127.0.0.1:3000:3000 getting-started
+docker run -<run as detach><published for port mapping> <ip>:<exposed port>:<docker port> <image/build name>
+
+-> show container
+
+docker ps 
+
+-> update container (rebuild image)
+
+docker build -t getting-started .
+
+-> remove container 
+
+1. get container id 
+
+docker ps
+
+2. stop container
+
+docker stop <id> 
+
+3. remove container
+
+docker rm <id>
+
+Note :
+... forcefully stop and remove container 
+... docker rm -f <id>
+... remove image 
+... docker images rm <id>
+
+-> pushing image 
+
+docker push <user name>/getting-started:tagname
+
+Note :
+... login with password in cli 
+... https://docs.docker.com/docker-hub/access-tokens/
+... docker login -u YOUR-USER-NAME
+
+-> run command in container  
+
+docker exec <container-id> cat /data.txt
+
+-> create volumn 
+
+docker volume create todo-db
+
+-> associate volume with container 
+
+docker run -dp 127.0.0.1:3000:3000 --mount type=volume,src=todo-db,target=/etc/todos getting-started
+docker run -dp 127.0.0.1:3000:3000 --<ahead instruction for mount> type=volume, src=<volume name>, target=<host file location> <image name>
+
+-> show volumn 
+
+docker volume ls
+
+-> all at once 
+
+docker run -dp 127.0.0.1:3000:3000 `
+    -w /app --mount "type=bind,src=$pwd,target=/app" `
+    node:18-alpine `
+    sh -c "yarn install && yarn run dev"
+
+-> read logs 
+
+docker logs -f <container-id>
+
+-> create network 
+
+docker network create todo-app
+
+-> show all networks 
+
+docker networks ls 
+
+-> associate network [mysql]
+
+docker run -d `
+    --network todo-app --network-alias mysql `
+    -v todo-mysql-data:/var/lib/mysql `
+    -e MYSQL_ROOT_PASSWORD=secret `
+    -e MYSQL_DATABASE=todos `
+    mysql:8.0
+
+docker exec -it <mysql-container-id> mysql -u root -p
+
+note :
+... https://blog.diogomonica.com//2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/
+
+-> all togather node + mysql 
+
+docker run -dp 127.0.0.1:3000:3000 `
+  -w /app -v "$(pwd):/app" `
+  --network todo-app `
+  -e MYSQL_HOST=mysql `
+  -e MYSQL_USER=root `
+  -e MYSQL_PASSWORD=secret `
+  -e MYSQL_DB=todos `
+  node:18-alpine `
+  sh -c "yarn install && yarn run dev"
+
+docker exec -it <mysql-container-id> mysql -p todos
