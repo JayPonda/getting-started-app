@@ -113,3 +113,26 @@ docker run -dp 127.0.0.1:3000:3000 `
   sh -c "yarn install && yarn run dev"
 
 docker exec -it <mysql-container-id> mysql -p todos
+
+-> run compose 
+
+docker compose up -d 
+
+-> show logs 
+
+docker compose logs -f app
+
+-> down 
+
+docker compose down / --volume
+
+-> layes of command in container
+
+docker image history [--no-trunc] getting-started
+
+note :
+... https://docs.docker.com/engine/reference/builder/#dockerignore-file
+
+
+
+

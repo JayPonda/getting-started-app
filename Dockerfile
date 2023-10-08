@@ -5,7 +5,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # copy current wall code at this level to app directory
-COPY . .
+COPY package.json yarn.lock ./
 
 # then install necessary packages 
 RUN yarn install --production
