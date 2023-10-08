@@ -45,6 +45,12 @@ Note :
 
 docker push <user name>/getting-started:tagname
 
+docker tag <image name>: <tag name>
+
+-> pull image
+
+docker pull <image name>:<tag name>
+
 Note :
 ... login with password in cli 
 ... https://docs.docker.com/docker-hub/access-tokens/
@@ -132,7 +138,4 @@ docker image history [--no-trunc] getting-started
 
 note :
 ... https://docs.docker.com/engine/reference/builder/#dockerignore-file
-
-
-
-
+... https://docs.docker.com/engine/reference/commandline/docker/
