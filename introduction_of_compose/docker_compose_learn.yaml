@@ -1,8 +1,27 @@
-version: "0.0.1v"
+version: "0.1.1v"
+x-compose-cli:
+  project_name: "docker compose learn"
 
 services:
   frontend:
     image: example/webapp
+    attach: true
+    weight: 300
+    weight_device:
+      - path: /dev/sda
+        weight: 400
+    device_read_bps:
+      - path: /dev/sdb
+        rate: "12mb"
+    device_read_iops:
+      - path: /dev/sdb
+        rate: 120
+    device_write_bps:
+      - path: /dev/sdb
+        rate: "1024k"
+    device_write_iops:
+      - path: /dev/sdb
+        rate: 30
     ports:
       - "443:8043"
     networks:
@@ -12,6 +31,7 @@ services:
       - httpd-config
     secrets:
       - server-certificate
+    command: echo "This is our app ${COMPOSE_PROJECT_NAME}"
 
   backend:
     image: example/database
@@ -19,6 +39,24 @@ services:
       - db-data:/etc/data
     networks:
       - back-tier
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+    credential_spec:
+      config: my_credential_spec
+
+  redis:
+    image: redis:latest
+    restart: true
+    configs:
+      - my_config
+      - my_other_config
+      - source: my_config
+        target: /redis_config
+        uid: "103"
+        gid: "103"
+        mode: 0440
 
 volumes:
   db-data:
@@ -29,6 +67,13 @@ volumes:
 configs:
   httpd-config:
     external: true
+  my_config:
+    file: ./my_config.txt
+  my_other_config:
+    external: true
+  credential_spec:
+    my_credentials_spec:
+    file: ./my-credential-spec.json|
 
 secrets:
   server-certificate:

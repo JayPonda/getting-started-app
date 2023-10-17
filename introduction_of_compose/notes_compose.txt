@@ -14,4 +14,75 @@ note (pending):
 
 ->  widgets of compose file 
 
-- 
+1. version
+- define "version" at top level to identified you compose file version 
+
+2. name
+x-compose-cli:
+  project_name: mycustomproject
+$ docker-compose -p mycustomproject up
+
+Note:
+... https://docs.docker.com/compose/compose-file/build/
+... https://docs.docker.com/compose/compose-file/deploy/
+... https://docs.docker.com/compose/compose-file/develop/
+
+3. blkio_config
+
+Weight: This is a relative weight assigned to a container. The weight is used to prioritize access to block I/O resources when multiple containers are competing for the same resources. Containers with a higher weight get a larger share of the available I/O resources. The weight value is an integer, and by default, all containers have a weight of 500.
+DeviceReadBps and DeviceWriteBps: These parameters allow you to set a limit on the maximum number of bytes per second (BPS) that a container is allowed to read and write to a specific block device.
+DeviceReadIops and DeviceWriteIops: Similar to BPS limits, these parameters allow you to set a limit on the number of I/O operations per second (IOPS) for both read and write operations on a specific block device.
+
+4. other
+
+cpu_count
+cpu_count defines the number of usable CPUs for service container.
+
+cpu_percent
+cpu_percent defines the usable percentage of the available CPUs.
+
+cpu_shares
+cpu_shares defines, as integer value, a service container's relative CPU weight versus other containers.
+
+cpu_period
+cpu_period configures CPU CFS (Completely Fair Scheduler) period when a platform is based on Linux kernel.
+
+cpu_quota
+cpu_quota configures CPU CFS (Completely Fair Scheduler) quota when a platform is based on Linux kernel.
+
+cpu_rt_runtime
+cpu_rt_runtime configures CPU allocation parameters for platforms with support for realtime scheduler. It can be either an integer value using microseconds as unit or a duration.
+
+cpu_rt_period
+cpu_rt_period configures CPU allocation parameters for platforms with support for realtime scheduler. It can be either an integer value using microseconds as unit or a
+
+cpuset
+cpuset defines the explicit CPUs in which to allow execution. Can be a range 0-3 or a list 0,1
+
+cap_add
+cap_add specifies additional container capabilities as strings.
+
+cap_add:
+  - ALL
+cap_drop
+cap_drop specifies container capabilities to drop as strings.
+
+cap_drop:
+  - NET_ADMIN
+  - SYS_ADMIN
+cgroup
+cgroup specifies the cgroup namespace to join. When unset, it is the container runtime's decision to select which cgroup namespace to use, if supported.
+
+host: Runs the container in the Container runtime cgroup namespace.
+private: Runs the container in its own private cgroup namespace.
+cgroup_parent
+cgroup_parent specifies an optional parent cgroup for the container.
+
+cgroup_parent: m-executor-abcd
+command
+command overrides the default command declared by the container image, for example by Dockerfile's CMD.
+
+Configs 
+container_name
+credential_spec
+
