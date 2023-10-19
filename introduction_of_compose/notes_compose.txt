@@ -86,3 +86,179 @@ Configs
 container_name
 credential_spec
 
+Note :-
+... https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v1/devices.html
+
+device_cgroup_rules:
+  - 'c 1:3 mr'
+  - 'a 7:* rmw'
+
+devices
+devices defines a list of device mappings for created containers in the form of HOST_PATH:CONTAINER_PATH[:CGROUP_PERMISSIONS].
+
+content_copy
+devices:
+  - "/dev/ttyUSB0:/dev/ttyUSB0"
+  - "/dev/sda:/dev/xvda:rwm"
+
+dns
+dns defines custom DNS servers to set on the container network interface configuration. It can be a single value or a list.
+
+dns: 8.8.8.8
+dns:
+  - 8.8.8.8
+  - 9.9.9.9
+
+dns_opt
+dns_opt list custom DNS options to be passed to the container’s DNS resolver (/etc/resolv.conf file on Linux).
+
+dns_opt:
+  - use-vc
+  - no-tld-query
+
+dns_search
+dns defines custom DNS search domains to set on container network interface configuration. It can be a single value or a list.
+
+dns_search: example.com
+dns_search:
+  - dc1.example.com
+  - dc2.example.com
+
+entrypoint
+entrypoint declares the default entrypoint for the service container. This overrides the ENTRYPOINT instruction from the service's Dockerfile.
+
+If entrypoint is non-null, Compose ignores any default command from the image, for example the CMD instruction in the Dockerfile.
+
+See also command to set or override the default command to be executed by the entrypoint process.
+
+In its short form, the value can be defined as a string:
+
+entrypoint: /code/entrypoint.sh
+Alternatively, the value can also be a list, in a manner similar to the Dockerfile:
+
+entrypoint:
+  - php
+  - -d
+  - zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20100525/xdebug.so
+  - -d
+  - memory_limit=-1
+  - vendor/bin/phpunit
+If the value is null, the default entrypoint from the image is used.
+
+If the value is [] (empty list) or '' (empty string), the default entrypoint declared by the image is ignored, i.e. overridden to be empty.
+
+env_file
+env_file adds environment variables to the container based on the file content.
+
+env_file: .env
+env_file can also be a list. The files in the list are processed from the top down. For the same variable specified in two env files, the value from the last file in the list stands.
+
+env_file:
+  - ./a.env
+  - ./b.env
+Relative path are resolved from the Compose file's parent folder. As absolute paths prevent the Compose file from being portable, Compose warns you when such a path is used to set env_file.
+
+Environment variables declared in the environment section override these values. This holds true even if those values are empty or undefined.
+
+Env_file format
+Each line in an .env file must be in VAR[=[VAL]] format. The following syntax rules apply:
+
+Lines beginning with # are processed as comments and ignored.
+Blank lines are ignored.
+Unquoted and double-quoted (") values have parameter expansion applied.
+Each line represents a key-value pair. Values can optionally be quoted.
+VAR=VAL -> VAL
+VAR="VAL" -> VAL
+VAR='VAL' -> VAL
+Inline comments for unquoted values must be preceded with a space.
+VAR=VAL # comment -> VAL
+VAR=VAL# not a comment -> VAL# not a comment
+Inline comments for quoted values must follow the closing quote.
+VAR="VAL # not a comment" -> VAL # not a comment
+VAR="VAL" # comment -> VAL
+Single-quoted (') values are used literally.
+VAR='$OTHER' -> $OTHER
+VAR='${OTHER}' -> ${OTHER}
+Quotes can be escaped with \.
+VAR='Let\'s go!' -> Let's go!
+VAR="{\"hello\": \"json\"}" -> {"hello": "json"}
+Common shell escape sequences including \n, \r, \t, and \\ are supported in double-quoted values.
+VAR="some\tvalue" -> some value
+VAR='some\tvalue' -> some\tvalue
+VAR=some\tvalue -> some\tvalue
+VAL may be omitted, in such cases the variable value is an empty string. =VAL may be omitted, in such cases the variable is unset.
+
+# Set Rails/Rack environment
+RACK_ENV=development
+VAR="quoted"
+environment
+environment defines environment variables set in the container. environment can use either an array or a map. Any boolean values; true, false, yes, no, should be enclosed in quotes to ensure they are not converted to True or False by the YAML parser.
+
+Environment variables can be declared by a single key (no value to equals sign). In this case Compose relies on you to resolve the value. If the value is not resolved, the variable is unset and is removed from the service container environment.
+
+Map syntax:
+
+environment:
+  RACK_ENV: development
+  SHOW: "true"
+  USER_INPUT:
+Array syntax:
+
+environment:
+  - RACK_ENV=development
+  - SHOW=true
+  - USER_INPUT
+When both env_file and environment are set for a service, values set by environment have precedence.
+
+expose
+expose defines the ports that Compose exposes from the container. These ports must be accessible to linked services and should not be published to the host machine. Only the internal container ports can be specified.
+
+expose:
+  - "3000"
+  - "8000"
+Note
+
+If the Dockerfile for the image already exposes ports, it is visible to other containers on the network even is expose is not set in your Compose file.
+
+extends
+extends lets you share common configurations among different files, or even different projects entirely. With extends you can define a common set of service options in one place and refer to it from anywhere. You can refer to another Compose file and select a service you want to also use in your own application, with the ability to override some attributes for your own needs.
+
+You can use extends on any service together with other configuration keys. The extends value must be a mapping defined with a required service and an optional file key.
+
+extends:
+  file: common.yml
+  service: webapp
+service: Defines the name of the service being referenced as a base, for example web or database.
+file: The location of a Compose configuration file defining that service.
+
+Note :-
+... https://docs.docker.com/compose/compose-file/05-services/#restrictions*
+... https://docs.docker.com/engine/reference/builder/#healthcheck
+
+ipc
+uts 
+isolation
+labels
+links
+logging
+network_mode
+networks 
+aliases
+ipv4_address, ipv6_address
+link_local_ips
+priority
+mac_address
+mem_swappiness
+memswap_limit
+oom_kill_disable
+oom_score_adj 
+pid 
+platform 
+ports 
+privileged
+profiles
+pull_policy
+read_only
+restart
+runtime 
+secrets
