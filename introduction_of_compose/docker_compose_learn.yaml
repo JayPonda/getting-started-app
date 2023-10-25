@@ -64,12 +64,51 @@ services:
       retries: 3
       start_period: 40s
       start_interval: 5s
+    secrets:
+      - my_secret
+      - my_other_secret
+      - source: my_secret
+        target: redis_secret
+        uid: "103"
+        gid: "103"
+        mode: 0440
+    stop_grace_period: 1m30s
+    tmpfs:
+      - /run
+      - /tmp
+
+  web:
+    image: nginx:alpine
+    volumes:
+      - type: volume
+        source: mydata
+        target: /data
+        volume:
+          nocopy: true
+      - type: bind
+        source: ./static
+        target: /opt/app/static
+
+  db:
+    image: postgres:latest
+    volumes:
+      - "/var/run/postgres/postgres.sock:/var/run/postgres/postgres.sock"
+      - "dbdata:/var/lib/postgresql/data"
+
+secrets:
+  my_secret:
+    file: ./my_secret.txt
+  my_other_secret:
+    external: true
+  server-certificate:
+    external: true
 
 volumes:
   db-data:
     driver: flocker
     driver_opts:
       size: "1GiB"
+  mydata:
 
 configs:
   httpd-config:
@@ -81,10 +120,6 @@ configs:
   credential_spec:
     my_credentials_spec:
     file: ./my-credential-spec.json|
-
-secrets:
-  server-certificate:
-    external: true
 
 networks:
   front-tier: {}
