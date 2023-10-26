@@ -36,5 +36,5 @@ RUN npx yarn install --production
 CMD npx yarn start
 
 # Expose the port that the application listens on.
-EXPOSE 3000
+EXPOSE 3000 5432
 

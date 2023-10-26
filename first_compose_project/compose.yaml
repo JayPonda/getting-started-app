@@ -14,9 +14,13 @@ services:
       - 127.0.0.1:3000:3000
     build:
       context: .
+    volumes:
+      - ./:/app
     environment:
       NODE_ENV: production
     command: sh -c "yarn install && yarn run dev"
+    depends_on:
+      - db
 
   # The commented out section below is an example of how to define a PostgreSQL
   # database that your application can use. `depends_on` tells Docker Compose to
@@ -29,7 +33,7 @@ services:
   #         condition: service_healthy
 
   db:
-    image: postgres
+    image: postgres:15.2-alpine
     restart: always
     user: postgres
     secrets:
@@ -41,7 +45,7 @@ services:
       - PGUSER=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-    expose:
+    ports:
       - 127.0.0.1:5432:5432
     healthcheck:
       test: ["CMD", "pg_isready"]
@@ -51,6 +55,7 @@ services:
 
 volumes:
   db-data:
+
 secrets:
   db-password:
     file: db/password.txt
